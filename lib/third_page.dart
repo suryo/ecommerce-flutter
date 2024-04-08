@@ -1,43 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class ThirdPage extends StatelessWidget {
+class ThirdPage extends StatefulWidget {
   final int angkaPertama;
 
   ThirdPage({required this.angkaPertama});
 
   @override
+  _ThirdPageState createState() => _ThirdPageState();
+}
+
+class _ThirdPageState extends State<ThirdPage> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: 'UrIiLvg58SY', // Ganti dengan ID video YouTube yang ingin Anda putar
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
+        mute: true,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> products = [
-      {
-        'name': 'iPhone',
-        'description': 'iPhone is the stylist phone ever',
-        'price': 1000,
-        'image': 'iphone.png',
-      },
-      {
-        'name': 'Pixel',
-        'description': 'Pixel is the most featureful phone ever',
-        'price': 800,
-        'image': 'pixel.png',
-      },
-    ];
-
-    int index = angkaPertama == 0 ? 0 : 1;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Halaman Ketiga'),
+        title: Text('Video Player'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ListTile(
-            title: Text(products[index]['name']),
-            subtitle: Text(products[index]['description']),
-            trailing: Text('\$${products[index]['price']}'),
-            leading: Image.asset('assets/${products[index]['image']}'),
+      body: Center(
+        child: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.amber,
+          progressColors: ProgressBarColors(
+            playedColor: Colors.amber,
+            handleColor: Colors.amberAccent,
           ),
-        ],
+          onReady: () {
+            _controller.addListener(() {});
+          },
+        ),
       ),
     );
   }
