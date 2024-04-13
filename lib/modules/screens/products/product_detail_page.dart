@@ -22,7 +22,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Future<Map<String, dynamic>> fetchProductDetail() async {
     final response =
-        await http.get(Uri.parse('https://dummyjson.com/products/${widget.productId}'));
+        await http.get(Uri.parse('http://api.zonainformatika.com/api/products/${widget.productId}'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -32,28 +32,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Future<void> addToCart(int productId, int quantity) async {
     final response = await http.post(
-      Uri.parse('https://dummyjson.com/carts/add'),
-      headers: { 'Content-Type': 'application/json' },
+      Uri.parse('http://api.zonainformatika.com/api/carts'),
+      headers: {'Content-Type': 'application/json'},
       body: json.encode({
-        'userId': 5,
-        'products': [
-          {
-            'id': productId,
-            'quantity': quantity,
-          },
-        ],
+        'user_id': 1,
+        'product_id': productId,
+        'quantity': quantity,
       }),
     );
 
-    if (response.statusCode == 200) {
-      print(productId);
-      print(quantity);
-      
-      print('Product added to cart successfully');
-      // Implement your logic after adding product to cart
-    } else {
-      throw Exception('Failed to add product to cart');
-    }
+    // if (response.statusCode == 200) {
+    //   print('Product added to cart successfully');
+    //   // Implement your logic after adding product to cart
+    // } else {
+    //   throw Exception('Failed to add product to cart');
+    // }
   }
 
   @override
@@ -71,7 +64,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             final productDetail = snapshot.data!;
-            List<dynamic> images = productDetail['images'];
+            List<dynamic> images = json.decode(productDetail['images']);
 
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -91,13 +84,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           top: 16,
                           left: 16,
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              '${productDetail['discountPercentage']}% Off',
+                              '${productDetail['discount_percentage']}% Off',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -117,7 +111,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Discount: ${productDetail['discountPercentage']}%',
+                    'Discount: ${productDetail['discount_percentage']}%',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),

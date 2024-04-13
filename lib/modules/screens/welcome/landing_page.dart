@@ -7,7 +7,6 @@ import 'package:fl_ecommerce/modules/screens/account/account_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class LandingPage extends StatefulWidget {
   @override
   _LandingPageState createState() => _LandingPageState();
@@ -18,11 +17,12 @@ class _LandingPageState extends State<LandingPage> {
   int _cartItemCount = 10; // Jumlah barang dalam keranjang
   late String _username;
 
+late GlobalKey<CartPageState> cartPageKey; // Pindahkan deklarasi ke sini
+
   List<Widget> _pages = [
-    // Define your pages here
     HomePage(),
     ProductsPage(),
-    CartPage(),
+    CartPage(), // Gunakan GlobalKey di CartPage
     TransactionsPage(),
     AccountPage(),
   ];
@@ -31,6 +31,7 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
     _getUsername();
+    cartPageKey = GlobalKey<CartPageState>(); 
   }
 
   Future<void> _getUsername() async {
@@ -161,7 +162,7 @@ class _LandingPageState extends State<LandingPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.orange, // Warna item yang dipilih
         unselectedItemColor: Colors.grey, // Warna item yang tidak dipilih
-        onTap: _onItemTapped,
+        onTap: _navigateToPage,
       ),
     );
   }
@@ -176,5 +177,13 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {
       _selectedIndex = index;
     });
+      print('Index page: $index'); // Cetak indeks halaman yang dipilih
+
+    if (index == 2) {
+      print('harusnya ini di cart');
+      // Jika halaman yang dipilih adalah CartPage, tampilkan alert
+      cartPageKey.currentState?.showAlert();
+      print('harusnya ini di cart');
+    }
   }
 }
